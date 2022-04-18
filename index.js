@@ -36,7 +36,17 @@ const goods = [
 
 app.use('/', express.static('.'));
 app.get('/goods', (req, res) => {
-    const jsonGoods = JSON.stringify(goods)
+    const { min = 0, max = Number.MAX_VALUE } = req.query
+
+    const filteredGoods = goods.filter(good => {
+        if (+good.price >= +min && +good.price <= +max) {
+            return true;
+        } else {
+            return false;
+        }
+    })
+
+    const jsonGoods = JSON.stringify(filteredGoods)
     return res.send(jsonGoods);
 })
 

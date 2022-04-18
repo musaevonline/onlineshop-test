@@ -11,8 +11,11 @@
 <body style="margin: 0;">
     <header style="height: 150px; background: antiquewhite;">
     </header>
-    <div style="display: flex; height: 100vh;">
+    <div class="a123" style="display: flex; height: 100vh;">
         <aside style="width: 200px; background: azure;">
+            min: <input id="FILTER_MIN">
+            max: <input id="FILTER_MAX">
+            <button id="FILTER_BUTTON">Применить фильтры</button>
         </aside>
         <main style="padding: 50px; display: flex; gap: 20px; flex-wrap: wrap;">
             <template id="GOOD_TEMPLATE">
@@ -26,24 +29,42 @@
                 </div>
             </template>
         </main>
+        <main class="asdf">
+
+        </main>
     </div>
     <script>
+        const GOOD_TEMPLATE = document.querySelector('#GOOD_TEMPLATE')
+        const MAIN = document.querySelector('main')
+        const FILTER_BUTTON = document.querySelector('#FILTER_BUTTON')
+        const FILTER_MIN = document.querySelector('#FILTER_MIN')
+        const FILTER_MAX = document.querySelector('#FILTER_MAX')
+
+        FILTER_BUTTON.onclick = () => {
+            fetch(`http://localhost:8080/goods?min=${FILTER_MIN.value}&max=${FILTER_MAX.value}`)
+                .then(res => res.json()).then(goods => {
+                    MAIN.innerHTML = ''
+                    goods.forEach(good => {
+                        const goodNode = GOOD_TEMPLATE.content.cloneNode(true)
+                        goodNode.querySelector('.title').textContent = good.title;
+                        goodNode.querySelector('.desc').textContent = good.description;
+                        goodNode.querySelector('.price').textContent = good.price;
+                        goodNode.querySelector('.img').textContent = good.img;
+                        MAIN.appendChild(goodNode)
+                    })
+                })
+        }
 
         fetch('http://localhost:8080/goods').then(res => res.json()).then(goods => {
             goods.forEach(good => {
-            const goodNode = GOOD_TEMPLATE.content.cloneNode(true)
-            goodNode.querySelector('.title').textContent = good.title;
-            goodNode.querySelector('.desc').textContent = good.description;
-            goodNode.querySelector('.price').textContent = good.price;
-            goodNode.querySelector('.img').textContent = good.img;
-            MAIN.appendChild(goodNode)
+                const goodNode = GOOD_TEMPLATE.content.cloneNode(true)
+                goodNode.querySelector('.title').textContent = good.title;
+                goodNode.querySelector('.desc').textContent = good.description;
+                goodNode.querySelector('.price').textContent = good.price;
+                goodNode.querySelector('.img').textContent = good.img;
+                MAIN.appendChild(goodNode)
+            })
         })
-        })
-        const GOOD_TEMPLATE = document.querySelector('#GOOD_TEMPLATE')
-        const MAIN = document.querySelector('main')
-
-
-
     </script>
 </body>
 
