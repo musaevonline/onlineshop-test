@@ -6,10 +6,37 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        .cart-button {
+            transition: all 0.2s;
+            font-size: 60px;
+            color: #fff4f4;
+            box-shadow: 0 10px 10px 2px #0002;
+            border-radius: 50%;
+            background: #a6cdb6;
+            padding: 10px;
+        }
+
+        .cart-button:hover {
+            background: #90b39f;
+            font-size: 62px;
+        }
+
+        .cart-button:active {
+            background: #90b39f;
+            font-size: 58px;
+        }
+    </style>
 </head>
 
 <body style="margin: 0;">
-    <header style="height: 150px; background: antiquewhite;">
+    <header
+        style="height: 150px; background: antiquewhite; display: flex; justify-content: flex-end; align-items: center; padding: 0 50px;">
+        <div style="position: relative;">
+            <a href="/cart.html"><i class="bx bx-shopping-bag cart-button"></i></a>
+            <span class="cart-counter" style="position: absolute; left: 50%; top: 50%; transform: translateX(-50%) translateY(-10%); font-family: system-ui;"></span>
+        </div>
     </header>
     <div class="a123" style="display: flex; height: 100vh;">
         <aside style="width: 200px; background: azure;">
@@ -26,6 +53,7 @@
                         <p class="price">500Р</p>
                         <p class="desc">description</p>
                     </div>
+                    <button class="buy">Купить</button>
                 </div>
             </template>
         </main>
@@ -34,11 +62,27 @@
         </main>
     </div>
     <script>
+        const getCookie = (name) => {
+            const cookies = document.cookie.split(';')
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i]
+                const [key, value] = cookie.split('=')
+                if (key.trim() === name) {
+                    return value
+                }
+            }
+            return null
+        }
+
         const GOOD_TEMPLATE = document.querySelector('#GOOD_TEMPLATE')
         const MAIN = document.querySelector('main')
         const FILTER_BUTTON = document.querySelector('#FILTER_BUTTON')
         const FILTER_MIN = document.querySelector('#FILTER_MIN')
         const FILTER_MAX = document.querySelector('#FILTER_MAX')
+        const cartCounter = document.querySelector('.cart-counter')
+
+        const cartCookie = JSON.parse(getCookie('cart'));
+        cartCounter.innerHTML = cartCookie.length;
 
         FILTER_BUTTON.onclick = () => {
             fetch(`http://localhost:8080/goods?min=${FILTER_MIN.value}&max=${FILTER_MAX.value}`)
@@ -50,6 +94,9 @@
                         goodNode.querySelector('.desc').textContent = good.description;
                         goodNode.querySelector('.price').textContent = good.price;
                         goodNode.querySelector('.img').textContent = good.img;
+                        goodNode.querySelector('.buy').addEventListener('click', () => {
+                            console.log(good)
+                        })
                         MAIN.appendChild(goodNode)
                     })
                 })
@@ -62,6 +109,18 @@
                 goodNode.querySelector('.desc').textContent = good.description;
                 goodNode.querySelector('.price').textContent = good.price;
                 goodNode.querySelector('.img').textContent = good.img;
+                goodNode.querySelector('.buy').addEventListener('click', () => {
+                    let cartCookie = JSON.parse(getCookie('cart'));
+                    if (!cartCookie) {
+                        document.cookie = `cart=[]`
+                        cartCookie = []
+                    }
+                    cartCookie.push(good)
+
+                    cartCounter.innerHTML = cartCookie.length;
+
+                    document.cookie = `cart=${JSON.stringify(cartCookie)}`
+                })
                 MAIN.appendChild(goodNode)
             })
         })

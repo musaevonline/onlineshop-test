@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        .cart-button {
+            transition: all 0.2s;
+            font-size: 60px;
+            color: #fff4f4;
+            box-shadow: 0 10px 10px 2px #0002;
+            border-radius: 50%;
+            background: #a6cdb6;
+            padding: 10px;
+        }
+
+        .cart-button:hover {
+            background: #90b39f;
+            font-size: 62px;
+        }
+
+        .cart-button:active {
+            background: #90b39f;
+            font-size: 58px;
+        }
+    </style>
+</head>
+
+<body style="margin: 0;">
+    <header
+        style="height: 150px; background: antiquewhite; display: flex; justify-content: flex-end; align-items: center; padding: 0 50px;">
+        <div style="position: relative;">
+            <a href="/cart.html"><i class="bx bx-shopping-bag cart-button"></i></a>
+            <span class="cart-counter" style="position: absolute; left: 50%; top: 50%; transform: translateX(-50%) translateY(-10%); font-family: system-ui;"></span>
+        </div>
+    </header>
+    <div style="display: flex; height: 100vh;">
+        <main style="display: flex; flex-direction: column; padding: 100px;">
+            <template id="GOOD_TEMPLATE">
+                <div style="display: flex; gap: 20px; margin: 20px; background: #eee; width: 80vw;">
+                    <img class="img" style="height: 100px;">
+                    <div class="title"></div>
+                    <div class="desc"></div>
+                    <div class="price"></div>
+                </div>
+            </template>
+        </main>
+    </div>
+    <script>
+        const getCookie = (name) => {
+            const cookies = document.cookie.split(';')
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i]
+                const [key, value] = cookie.split('=')
+                if (key.trim() === name) {
+                    return value
+                }
+            }
+            return null
+        }
+
+        const GOOD_TEMPLATE = document.querySelector('#GOOD_TEMPLATE')
+        const MAIN = document.querySelector('main')
+        const cartCounter = document.querySelector('.cart-counter')
+
+        const cartCookie = JSON.parse(getCookie('cart'));
+        cartCounter.innerHTML = cartCookie.length;
+
+        const goods = JSON.parse(getCookie('cart'))
+
+        goods.forEach(good => {
+            const goodNode = GOOD_TEMPLATE.content.cloneNode(true)
+            goodNode.querySelector('.title').textContent = good.title;
+            goodNode.querySelector('.desc').textContent = good.description;
+            goodNode.querySelector('.price').textContent = good.price;
+            goodNode.querySelector('.img').setAttribute('src', good.img);
+            MAIN.appendChild(goodNode)
+        })
+    </script>
+</body>
+
+</html>
